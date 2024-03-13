@@ -18,13 +18,4 @@
     box-sizing: border-box;
 }
 
-.search button:hover {
-    background-color: grey;
-    transition: 0.3s;
-}
 
-.search button:active {
-    background-color: #005cbf;
-    transform: scale(0.95);
-    transition: transform 0.1s;
-}

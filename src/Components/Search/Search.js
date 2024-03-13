@@ -1,21 +1,24 @@
 import React from 'react';
 import './Search.css';
 import { useState } from 'react';
+import loading from '../../Assets/loading.gif';
 
-function Search({ title, url }) {
+function Search({ title, url, handleHide }) {
     const [data, setData] = useState([]);
     const [showData, setShowData] = useState(false);
     const [dataText, setDataText] = useState('Press Button to Fetch Data');
+    const [showLoading, setShowLoading] = useState(false);
 
     const getData = () => {
         setShowData(false);
-        setDataText('Loading...');
+        setShowLoading(true);
+        setDataText('');
         fetch(url)
             .then((res) => res.json())
             .then((json) => {
                 setData(json);
-                setDataText('');
                 setShowData(true);
+                setShowLoading(false);
             });
     };
 
@@ -31,7 +34,9 @@ function Search({ title, url }) {
 
     return (
         <div className="search">
-            <button className="hide-button">HIDE</button>
+            <button className="hide-button" onClick={handleHide}>
+                HIDE
+            </button>
             <h1>{title}</h1>
             <button className="search-btn" onClick={() => getData()}>
                 {data.length === 0 ? 'Fetch Data' : 'Refresh Data'}
@@ -48,6 +53,7 @@ function Search({ title, url }) {
             <input className="input" type="text"></input>
             <button className="search-btn">Clear</button>
             <h3>Data:</h3>
+            {showLoading && <img src={loading} alt='Loading...'></img>}
             {showData ? (
                 <pre>{JSON.stringify(data, null, 4)}</pre>
             ) : (
