@@ -20,14 +20,18 @@ function Search({ title, url }) {
     };
 
     const clearData = () => {
-        setShowData(false);
-        setData([]);
-        setDataText('Data has been cleared');
+        if (data.length === 0) {
+            setDataText('There is no data to clear!');
+        } else {
+            setShowData(false);
+            setData([]);
+            setDataText('Data has been cleared');
+        }
     };
 
     return (
-        <div>
-            <button>HIDE</button>
+        <div className="search">
+            <button className="hide-button">HIDE</button>
             <h1>{title}</h1>
             <button className="search-btn" onClick={() => getData()}>
                 {data.length === 0 ? 'Fetch Data' : 'Refresh Data'}
@@ -36,12 +40,12 @@ function Search({ title, url }) {
                 Clear
             </button>
             <br />
-            <select className='dropdown'>
+            <select className="dropdown">
                 <option value="none">Filter By</option>
                 <option value="2">Option 2</option>
                 <option value="3">Option 3</option>
             </select>
-            <input className='input' type="text"></input>
+            <input className="input" type="text"></input>
             <button className="search-btn">Clear</button>
             <h3>Data:</h3>
             {showData ? (
