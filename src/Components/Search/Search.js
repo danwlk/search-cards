@@ -65,8 +65,8 @@ function Search({ title, url, handleHide }) {
                 <pre>{JSON.stringify(data, null, 4)}</pre>
             ) : showFiltered ? (
                 <ul>
-                    {filteredItems.map((item) => {
-                        return <li key={item}>{item}</li>
+                    {filteredItems.map((item, i) => {
+                        return <li key={i}>{item}</li>
                     })}
                 </ul>
             ) : (

@@ -13,6 +13,7 @@ const useSearchLogic = (url) => {
 
     const getData = () => {
         setShowData(false);
+        setShowFiltered(false);
         setShowLoading(true);
         setDataText('');
         fetch(url)
@@ -54,8 +55,9 @@ const useSearchLogic = (url) => {
                 .map((item) => {
                     return item[filterValue];
                 });
-            
-            setFilteredItems(temp);
+            const noDuplicates = [...new Set(temp)];
+            console.log(noDuplicates);
+            setFilteredItems(() => noDuplicates);
             setShowData(false);
             setShowFiltered(true);
         }
