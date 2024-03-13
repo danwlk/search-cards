@@ -57,7 +57,7 @@ function App() {
                     {data.map((item) => {
                         return (
                             !hide[item.id] && (
-                                <Col md={12 / activeCards}>
+                                <Col md={12 / activeCards} key={item.id}>
                                     <Card className="search-box">
                                         <Search
                                             title={item.title}

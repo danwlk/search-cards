@@ -2,35 +2,22 @@ import React from 'react';
 import './Search.css';
 import { useState } from 'react';
 import loading from '../../Assets/loading.gif';
+import useSearchLogic from './useSearchLogic';
 
 function Search({ title, url, handleHide }) {
-    const [data, setData] = useState([]);
-    const [showData, setShowData] = useState(false);
-    const [dataText, setDataText] = useState('Press Button to Fetch Data');
-    const [showLoading, setShowLoading] = useState(false);
-
-    const getData = () => {
-        setShowData(false);
-        setShowLoading(true);
-        setDataText('');
-        fetch(url)
-            .then((res) => res.json())
-            .then((json) => {
-                setData(json);
-                setShowData(true);
-                setShowLoading(false);
-            });
-    };
-
-    const clearData = () => {
-        if (data.length === 0) {
-            setDataText('There is no data to clear!');
-        } else {
-            setShowData(false);
-            setData([]);
-            setDataText('Data has been cleared');
-        }
-    };
+    const {
+        data,
+        showData,
+        dataText,
+        showLoading,
+        keys,
+        typing,
+        getData,
+        clearData,
+        handleTyping,
+        handleClear,
+        handleSearch,
+    } = useSearchLogic(url);
 
     return (
         <div className="search">
@@ -47,13 +34,25 @@ function Search({ title, url, handleHide }) {
             <br />
             <select className="dropdown">
                 <option value="none">Filter By</option>
-                <option value="2">Option 2</option>
-                <option value="3">Option 3</option>
+                {keys.map((key) => {
+                    return <option value={key}>{key}</option>;
+                })}
             </select>
-            <input className="input" type="text"></input>
-            <button className="search-btn">Clear</button>
+            <input
+                className="input"
+                type="text"
+                value={typing}
+                onChange={(e) => handleTyping(e)}
+                placeholder="Enter value"
+            ></input>
+            <button className="search-btn" onClick={() => handleSearch()}>
+                Search
+            </button>
+            <button className="search-btn" onClick={() => handleClear()}>
+                Clear
+            </button>
             <h3>Data:</h3>
-            {showLoading && <img src={loading} alt='Loading...'></img>}
+            {showLoading && <img src={loading} alt="Loading..."></img>}
             {showData ? (
                 <pre>{JSON.stringify(data, null, 4)}</pre>
             ) : (
