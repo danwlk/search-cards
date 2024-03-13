@@ -1,6 +1,5 @@
 import React from 'react';
 import './Search.css';
-import { useState } from 'react';
 import loading from '../../Assets/loading.gif';
 import useSearchLogic from './useSearchLogic';
 
@@ -12,11 +11,13 @@ function Search({ title, url, handleHide }) {
         showLoading,
         keys,
         typing,
+        filteredItems,
+        showFiltered,
         getData,
         clearData,
         handleTyping,
         handleClear,
-        handleSearch,
+        handleFilterChange,
     } = useSearchLogic(url);
 
     return (
@@ -32,10 +33,17 @@ function Search({ title, url, handleHide }) {
                 Clear
             </button>
             <br />
-            <select className="dropdown">
-                <option value="none">Filter By</option>
+            <select
+                className="dropdown"
+                onChange={(e) => handleFilterChange(e)}
+            >
+                <option value="Filter By">Filter By</option>
                 {keys.map((key) => {
-                    return <option value={key}>{key}</option>;
+                    return (
+                        <option value={key} key={key}>
+                            {key}
+                        </option>
+                    );
                 })}
             </select>
             <input
@@ -45,9 +53,9 @@ function Search({ title, url, handleHide }) {
                 onChange={(e) => handleTyping(e)}
                 placeholder="Enter value"
             ></input>
-            <button className="search-btn" onClick={() => handleSearch()}>
-                Search
-            </button>
+
+            {/* TODO: make function handleSearch for search button */}
+            <button className="search-btn">Search</button>
             <button className="search-btn" onClick={() => handleClear()}>
                 Clear
             </button>
@@ -55,6 +63,12 @@ function Search({ title, url, handleHide }) {
             {showLoading && <img src={loading} alt="Loading..."></img>}
             {showData ? (
                 <pre>{JSON.stringify(data, null, 4)}</pre>
+            ) : showFiltered ? (
+                <ul>
+                    {filteredItems.map((item) => {
+                        return <li key={item}>{item}</li>
+                    })}
+                </ul>
             ) : (
                 <div>{dataText}</div>
             )}
