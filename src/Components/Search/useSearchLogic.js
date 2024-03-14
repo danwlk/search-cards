@@ -10,6 +10,7 @@ const useSearchLogic = (url) => {
     const [typing, setTyping] = useState('');
     const [filteredItems, setFilteredItems] = useState([]);
     const [showFiltered, setShowFiltered] = useState(false);
+    const [filteredItems2, setFilteredItems2] = useState([]);
 
     const getData = () => {
         setShowData(false);
@@ -28,6 +29,7 @@ const useSearchLogic = (url) => {
 
     const clearData = () => {
         setShowData(false);
+        setShowFiltered(false);
         setData([]);
         setKeys([]);
         setDataText('Data has been cleared');
@@ -39,31 +41,67 @@ const useSearchLogic = (url) => {
 
     const handleClear = () => {
         setTyping('');
+        setDataText('');
+        setFilteredItems(filteredItems2);
     };
 
     const handleFilterChange = (e) => {
-        const filterValue = e.target.value;
+        const f = e.target.value;
 
-        if (filterValue === 'Filter By') {
+        if (f === 'Filter By') {
             setShowData(true);
             setShowFiltered(false);
         } else {
             const temp = data
                 .filter((item) => {
-                    return item[filterValue] !== undefined;
+                    return item[f] !== undefined;
                 })
                 .map((item) => {
-                    return item[filterValue];
+                    return [item[f], item.id];
                 });
-            const noDuplicates = [...new Set(temp)];
-            console.log(noDuplicates);
-            setFilteredItems(() => noDuplicates);
+            setFilteredItems(() => temp);
+            setFilteredItems2(() => temp);
             setShowData(false);
             setShowFiltered(true);
         }
     };
 
-    const handleSearch = () => {};
+    const showJson = (id) => {
+        const jsonData = data.find((item) => item.id === id);
+
+        const jsonString = JSON.stringify(jsonData, null, 2);
+
+        setFilteredItems((old) => {
+            return old.map((item) => {
+                if (item[1] === id) {
+                    return [jsonString, item[1]];
+                }
+                return item;
+            });
+        });
+    };
+
+    const handleSearch = (value) => {
+        if (!showData && !showFiltered) {
+            setDataText('You have to fetch the data before you can search.');
+            setTyping('');
+        } else if (showData) {
+            setDataText('You have to choose the filter option first');
+            setTyping('');
+        } else if (showFiltered) {
+            setDataText('');
+            const temp = filteredItems2;
+
+            setFilteredItems(() =>
+                temp.filter((item) => {
+                    return item[0]
+                        .toString()
+                        .toLowerCase()
+                        .includes(value.toLowerCase());
+                })
+            );
+        }
+    };
 
     return {
         data,
@@ -79,6 +117,8 @@ const useSearchLogic = (url) => {
         handleTyping,
         handleClear,
         handleFilterChange,
+        showJson,
+        handleSearch,
     };
 };
 

@@ -2,6 +2,7 @@ import React from 'react';
 import './Search.css';
 import loading from '../../Assets/loading.gif';
 import useSearchLogic from './useSearchLogic';
+import { CloseButton } from 'react-bootstrap';
 
 function Search({ title, url, handleHide }) {
     const {
@@ -18,6 +19,8 @@ function Search({ title, url, handleHide }) {
         handleTyping,
         handleClear,
         handleFilterChange,
+        showJson,
+        handleSearch,
     } = useSearchLogic(url);
 
     return (
@@ -46,32 +49,61 @@ function Search({ title, url, handleHide }) {
                     );
                 })}
             </select>
-            <input
-                className="input"
-                type="text"
-                value={typing}
-                onChange={(e) => handleTyping(e)}
-                placeholder="Enter value"
-            ></input>
-
-            {/* TODO: make function handleSearch for search button */}
-            <button className="search-btn">Search</button>
-            <button className="search-btn" onClick={() => handleClear()}>
-                Clear
-            </button>
+            <div className="search-bar">
+                <input
+                    className="search-input"
+                    type="text"
+                    value={typing}
+                    onChange={(e) => handleTyping(e)}
+                    placeholder="Enter value"
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            handleSearch(typing);
+                        }
+                    }}
+                ></input>
+                <CloseButton
+                    className="clear-button"
+                    onClick={() => handleClear()}
+                />
+                <button
+                    className="search-button"
+                    onClick={() => handleSearch(typing)}
+                >
+                    search
+                </button>
+            </div>
+            <div>{dataText}</div>
             <h3>Data:</h3>
             {showLoading && <img src={loading} alt="Loading..."></img>}
             {showData ? (
                 <pre>{JSON.stringify(data, null, 4)}</pre>
             ) : showFiltered ? (
                 <ul>
-                    {filteredItems.map((item, i) => {
-                        return <li key={i}>{item}</li>
+                    {filteredItems.map((item) => {
+                        return (
+                            <li key={item[1]} style={{ marginBottom: '1rem' }}>
+                                {typeof item[0] === 'string' &&
+                                item[0].startsWith('{') ? (
+                                    <div>
+                                        <pre>{item[0]}</pre>
+                                    </div>
+                                ) : (
+                                    <div>
+                                        {item[0]}
+                                        <button
+                                            className="element-button"
+                                            onClick={() => showJson(item[1])}
+                                        >
+                                            Show Data
+                                        </button>
+                                    </div>
+                                )}
+                            </li>
+                        );
                     })}
                 </ul>
-            ) : (
-                <div>{dataText}</div>
-            )}
+            ) : null}
         </div>
     );
 }
